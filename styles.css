@@ -1,0 +1,715 @@
+:root {
+    --primary-color: #3A86FF;    /* 主色调：现代蓝 */
+    --accent-color: #FF006E;     /* 强调色：活力粉 */
+    --bg-color: #F8F9FA;         /* 背景色：浅灰 */
+    --text-color: #212529;       /* 文字色：深灰 */
+    --border-color: #DEE2E6;     /* 边框色：中灰 */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+header {
+    background-color: white;
+    color: #fff;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin-left: 1rem;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    resize: vertical;
+}
+
+textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+label[for="pet-photo"], button, select {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+#generated-image {
+    width: 100%;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+aside {
+    background-color: #e9e9e9;
+    padding: 1rem;
+    flex-basis: 25%;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+}
+
+.social-links a {
+    color: #fff;
+    margin: 0 0.5rem;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+    }
+
+    nav ul {
+        margin-top: 1rem;
+    }
+
+    main {
+        flex-direction: column;
+    }
+
+    aside {
+        order: -1;
+    }
+}
+
+.upload-container {
+    margin: 1rem 0;
+}
+
+#image-preview {
+    width: 200px;
+    height: 200px;
+    border: 2px dashed #ccc;
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #f8f8f8;
+}
+
+#preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.preview-text {
+    color: #666;
+    text-align: center;
+}
+
+/* 修改上传按钮样式 */
+label[for="pet-photo"] {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+label[for="pet-photo"]:hover {
+    background-color: #45a049;
+}
+
+/* 添加API配置区域的样式 */
+.api-config {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 5px;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.api-key-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.save-key-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.save-key-btn:hover {
+    background-color: #2563EB;
+    transform: translateY(-1px);
+}
+
+/* 修改生成按钮样式 */
+#generate-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* 修改下载按钮样式 */
+#download-btn {
+    display: none;
+}
+
+#download-btn.active {
+    display: inline-block;
+}
+
+/* 添加预览图相关样式 */
+.preview-container {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    margin: 0 auto;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.preview-image:hover {
+    transform: scale(1.05);
+}
+
+.preview-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.preview-container:hover .preview-hint {
+    opacity: 1;
+}
+
+/* 添加模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 80vh;
+    object-fit: contain;
+}
+
+.close {
+    position: absolute;
+    right: 35px;
+    top: 15px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 添加网格布局样式 */
+.generated-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+/* 修改预览容器样式 */
+.preview-container {
+    width: 100%;
+    aspect-ratio: 1;
+    position: relative;
+    cursor: pointer;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* 添加复选框样式 */
+.image-checkbox {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+}
+
+.image-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.image-checkbox label {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 2px solid #4CAF50;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.image-checkbox input[type="checkbox"]:checked + label {
+    background-color: #4CAF50;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>');
+    background-size: 80%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* 添加选择控制按钮样式 */
+.selection-controls {
+    display: none;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.selection-controls button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.selection-controls button:hover {
+    background-color: #45a049;
+}
+
+/* 修改预览图样式 */
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.preview-container:hover .preview-image {
+    transform: scale(1.05);
+}
+
+/* 调整预览提示样式 */
+.preview-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.preview-container:hover .preview-hint {
+    opacity: 1;
+}
+
+.preview-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.selection-controls button {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 12px 24px;
+}
+
+.modal {
+    backdrop-filter: blur(4px);
+}
+
+.close {
+    font-size: 32px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.close:hover {
+    opacity: 1;
+}
+
+/* 添加移动端优化样式 */
+
+/* 基础响应式设置 */
+@media (max-width: 768px) {
+    main {
+        padding: 1rem;
+    }
+
+    section {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    /* 导航栈式布局 */
+    header {
+        padding: 0.5rem;
+    }
+
+    nav ul {
+        width: 100%;
+        justify-content: space-around;
+        padding: 0;
+        margin: 0.5rem 0;
+    }
+
+    nav ul li {
+        margin: 0;
+    }
+
+    nav ul li a {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+        color: var(--text-color);
+    }
+
+    /* API配置区域优化 */
+    .api-config {
+        flex-direction: column;
+        margin: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    .api-key-input {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    /* 生成区域优化 */
+    textarea {
+        height: 80px;
+        font-size: 16px; /* 防止iOS自动缩放 */
+    }
+
+    /* 上传和预览区域优化 */
+    .upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #image-preview {
+        width: 150px;
+        height: 150px;
+    }
+
+    /* 控制按钮优化 */
+    label[for="pet-photo"], 
+    button, 
+    select {
+        width: 100%;
+        margin: 0.5rem 0;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    /* 生成结果网格优化 */
+    .generated-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0.5rem;
+    }
+
+    .preview-container {
+        width: 100%;
+        height: auto;
+    }
+
+    /* 选择控制按钮优化 */
+    .selection-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .selection-controls button {
+        width: 100%;
+    }
+
+    /* 模态框优化 */
+    .modal {
+        padding-top: 20px;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-height: 70vh;
+    }
+
+    .close {
+        right: 15px;
+        top: 15px;
+        font-size: 30px;
+    }
+
+    /* 底部优化 */
+    footer {
+        padding: 1rem 0.5rem;
+    }
+
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    /* 移动端触摸优化 */
+    .preview-container {
+        touch-action: manipulation;
+    }
+
+    .image-checkbox label {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* 移动端滚动优化 */
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 移动端点击区域优化 */
+    button, 
+    select, 
+    .image-checkbox label {
+        min-height: 44px; /* iOS建议的最小点击区域 */
+    }
+}
+
+/* 添加暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #121212;
+        --text-color: #ffffff;
+        --border-color: #333333;
+    }
+
+    section, 
+    .api-config {
+        background-color: #1e1e1e;
+    }
+
+    textarea, 
+    select, 
+    .api-key-input {
+        background-color: #2d2d2d;
+        color: white;
+    }
+}
+
+/* 优化加载状态显示 */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+#generate-btn:disabled {
+    animation: pulse 1.5s infinite;
+}
+
+/* 优化触摸反馈 */
+@media (hover: none) {
+    .preview-container:hover {
+        transform: none;
+    }
+
+    .preview-hint {
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* 添加API配置区域隐藏样式 */
+.hidden {
+    display: none !important;
+}
+
+/* 修改aside样式 */
+.mobile-guide {
+    margin-top: 1rem;
+    background: none;
+    padding: 0;
+}
+
+.guide-toggle {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin: 0 1rem;
+}
+
+.arrow-down {
+    border: solid var(--text-color);
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+}
+
+.guide-toggle.active .arrow-down {
+    transform: rotate(-135deg);
+}
+
+.guide-content {
+    display: none;
+    background: white;
+    margin: 0.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.guide-content.active {
+    display: block;
+}
+
+/* 修改移动端样式 */
+@media (max-width: 768px) {
+    aside {
+        order: 0; /* 移除之前的 order: -1 */
+    }
+
+    .guide-toggle {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+    }
+
+    #examples, #guide {
+        padding: 1rem;
+    }
+
+    #examples h3, #guide h3 {
+        margin-top: 0;
+        font-size: 1rem;
+    }
+
+    #guide p {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+    }
+}

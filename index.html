@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宠物图像生成器</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">宠物图像生成器</div>
+        <nav>
+            <ul>
+                <li><a href="#home">首页</a></li>
+                <li><a href="#generate">生成</a></li>
+                <li><a href="#style">风格选择</a></li>
+                <li><a href="#about">关于我们</a></li>
+                <li><a href="#contact">联系我们</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="generate">
+            <h2>生成您的宠物图像</h2>
+            <div class="upload-container">
+                <input type="file" id="pet-photo" accept="image/*" onchange="previewImage(event)">
+                <label for="pet-photo">上传宠物照片</label>
+                <div id="image-preview">
+                    <img id="preview" src="" alt="预览图" style="display: none;">
+                    <p class="preview-text">预览区域</p>
+                </div>
+            </div>
+            <select id="style-select" onchange="handleStyleChange()">
+                <option value="">选择风格</option>
+                <option value="felt">毛毡风格</option>
+                <option value="cartoon">卡通风格</option>
+                <option value="realistic">真实风格</option>
+                <option value="dreamy">梦幻风格</option>
+                <option value="warm">温馨风格</option>
+            </select>
+            <button id="generate-btn" onclick="generateImage()" disabled>请先上传图片</button>
+        </section>
+
+        <section id="result">
+            <h2>生成结果</h2>
+            <div id="generated-image" class="generated-grid"></div>
+            <div class="selection-controls" style="display: none;">
+                <button id="download-selected-btn">下载选中图片</button>
+                <button id="download-all-btn">下载全部图片</button>
+            </div>
+        </section>
+    </main>
+
+    <aside class="mobile-guide">
+        <div class="guide-toggle" onclick="toggleGuide()">
+            <span>查看使用帮助</span>
+            <i class="arrow-down"></i>
+        </div>
+        <div class="guide-content">
+            <section id="examples">
+                <h3>热门生成示例</h3>
+                <!-- 这里可以添加示例图片 -->
+            </section>
+            <section id="guide">
+                <h3>使用指南</h3>
+                <p>1. 输入描述文本</p>
+                <p>2. 上传宠物照片</p>
+                <p>3. 选择风格</p>
+                <p>4. 点击生成按钮</p>
+            </section>
+        </div>
+    </aside>
+
+    <footer>
+        <p>&copy; 2023 宠物图像生成器. 保留所有权利。</p>
+        <div class="social-links">
+            <a href="#" target="_blank">微博</a>
+            <a href="#" target="_blank">微信</a>
+            <a href="#" target="_blank">抖音</a>
+        </div>
+        <p>联系我们: <a href="mailto:contact@petimagegenrator.com">contact@petimagegenrator.com</a></p>
+    </footer>
+
+    <!-- 在body标签最后添加模态框 -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <script>
+    // 页面加载时自动保存API密钥
+    window.addEventListener('DOMContentLoaded', function() {
+        const defaultApiKey = 'hk-qblzu31000044259ddfb03f98a6934ae4b1eadaf692a30b4';
+        localStorage.setItem('api_key', defaultApiKey);
+        document.getElementById('api-key').value = defaultApiKey;
+    });
+
+    // 添加风格描述映射
+    const styleDescriptions = {
+        'felt': 'Transform this pet photo into a felt art style with wool felt texture and handmade felt appearance',
+        'cartoon': 'Create a cute cartoon version of this pet with vibrant colors and animation style',
+        'realistic': 'Enhance this pet photo into a photorealistic, highly detailed professional photography style',
+        'dreamy': 'Transform this pet photo with dreamy atmosphere, soft lighting and ethereal mood',
+        'warm': 'Render this pet photo in warm tones with cozy atmosphere and gentle lighting'
+    };
+
+    // 修改预览图片函数
+    function previewImage(event) {
+        const preview = document.getElementById('preview');
+        const previewText = document.querySelector('.preview-text');
+        const generateBtn = document.getElementById('generate-btn');
+        const file = event.target.files[0];
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                previewText.style.display = 'none';
+                generateBtn.textContent = '选择风格后生成';
+                generateBtn.disabled = !document.getElementById('style-select').value;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // 添加风格变化处理函数
+    function handleStyleChange() {
+        const generateBtn = document.getElementById('generate-btn');
+        const styleSelect = document.getElementById('style-select');
+        const preview = document.getElementById('preview');
+        
+        if (preview.style.display === 'block' && styleSelect.value) {
+            generateBtn.textContent = '生成图像';
+            generateBtn.disabled = false;
+        } else if (!styleSelect.value) {
+            generateBtn.textContent = '选择风格后生成';
+            generateBtn.disabled = true;
+        }
+    }
+
+    // 修改生成图片函数
+    async function generateImage() {
+        const apiKey = localStorage.getItem('api_key');
+        if (!apiKey) {
+            alert('系统错误，请刷新页面重试');
+            return;
+        }
+
+        const imageFile = document.getElementById('pet-photo').files[0];
+        const style = document.getElementById('style-select').value;
+        
+        if (!imageFile || !style) {
+            alert('请确保已上传图片并选择风格！');
+            return;
+        }
+
+        const generateBtn = document.getElementById('generate-btn');
+        generateBtn.textContent = '生成中...';
+        generateBtn.disabled = true;
+
+        try {
+            const base64 = await fileToBase64(imageFile);
+            const description = styleDescriptions[style] || '';
+
+            const response = await fetch('https://api.openai-hk.com/mj/submit/imagine', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    prompt: description,
+                    base64Array: [base64],
+                    notifyHook: "",
+                    state: ""
+                })
+            });
+
+            const result = await response.json();
+            
+            if (result.code === 1) {
+                pollTaskStatus(result.result);
+            } else {
+                throw new Error(result.description || '生成失败');
+            }
+        } catch (error) {
+            alert('生成失败: ' + error.message);
+            generateBtn.textContent = '重新生成';
+            generateBtn.disabled = false;
+        }
+    }
+
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    async function pollTaskStatus(taskId) {
+        const apiKey = localStorage.getItem('api_key');
+        
+        try {
+            const response = await fetch(`https://api.openai-hk.com/mj/task/${taskId}/fetch`, {
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`
+                }
+            });
+            
+            const result = await response.json();
+            
+            if (result.status === 'SUCCESS') {
+                const imageUrls = result.imageUrls || [result.imageUrl];
+                
+                const generatedContainer = document.getElementById('generated-image');
+                generatedContainer.innerHTML = imageUrls.map((url, index) => `
+                    <div class="preview-container">
+                        <div class="image-checkbox">
+                            <input type="checkbox" id="img-${index}" data-url="${url}">
+                            <label for="img-${index}"></label>
+                        </div>
+                        <img src="${url}" alt="生成的图片 ${index + 1}" class="preview-image" onclick="showModal('${url}')">
+                        <div class="preview-hint">点击查看大图</div>
+                    </div>
+                `).join('');
+                
+                document.querySelector('.selection-controls').style.display = 'flex';
+                
+                const generateBtn = document.getElementById('generate-btn');
+                generateBtn.textContent = '生成图像';
+                generateBtn.disabled = false;
+                
+                setupDownloadButtons();
+            } else if (result.status === 'FAILURE') {
+                throw new Error(result.failReason || '生成失败');
+            } else {
+                setTimeout(() => pollTaskStatus(taskId), 2000);
+            }
+        } catch (error) {
+            alert('查询任务状态失败: ' + error.message);
+            const generateBtn = document.getElementById('generate-btn');
+            generateBtn.textContent = '生成图像';
+            generateBtn.disabled = false;
+        }
+    }
+
+    function setupDownloadButtons() {
+        const downloadSelectedBtn = document.getElementById('download-selected-btn');
+        const downloadAllBtn = document.getElementById('download-all-btn');
+        
+        downloadSelectedBtn.onclick = () => {
+            const selectedImages = document.querySelectorAll('.image-checkbox input:checked');
+            if (selectedImages.length === 0) {
+                alert('请至少选择一张图片');
+                return;
+            }
+            selectedImages.forEach(checkbox => {
+                window.open(checkbox.dataset.url);
+            });
+        };
+        
+        downloadAllBtn.onclick = () => {
+            const allImages = document.querySelectorAll('.image-checkbox input');
+            allImages.forEach(checkbox => {
+                window.open(checkbox.dataset.url);
+            });
+        };
+    }
+
+    // 添加模态框相关函数
+    function showModal(imgUrl) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        modal.style.display = "block";
+        modalImg.src = imgUrl;
+    }
+
+    // 在现有的script标签中添加关闭模态框的事件监听
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('imageModal');
+        const span = document.getElementsByClassName("close")[0];
+        
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        
+        modal.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    });
+    </script>
+</body>
+</html>
